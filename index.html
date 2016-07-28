@@ -1,0 +1,85 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+    </head>
+    <body>
+
+        <div id="form">
+          <h2>Add Account</h2>
+          <p>
+            <label for="account-login">Login: </label>
+            <input id="account-login" type="text">
+          </p>
+          <p>
+            <label for="account-display-name">Display name: </label>
+            <input id="account-display-name" type="text">
+          </p>
+          <p>
+            <input id="add-account" type="button" value="Add Account">
+            <input id="refresh-accounts" type="button" value="Refresh Accounts">
+          </p>
+        </div>
+        <div id="content"></div>
+        <script>
+        var iframeOrigin = 'http://accounts.okta.io:8081';
+        $(document).ready(function() {
+          $('body').append('<iframe id="account-chooser-iframe" src="' + iframeOrigin +
+            '/discovery/iframe.html" style="display:none;"></iframe>');
+
+          $('#add-account').click(function() {
+            login($('#account-login').val(), $('#account-display-name').val());
+            $('#account-login').val('');
+            $('#account-display-name').val('');
+          });
+
+          $('#refresh-accounts').click(function() {
+            $('#content').html('');
+            refreshAccounts();
+          });
+        });
+
+        function login(login, displayName) {
+          var iframeWin = document.getElementById("account-chooser-iframe").contentWindow;
+          console.log('posting message to iframe');
+          iframeWin.postMessage({
+            type: 'login',
+            login: login,
+            displayName: displayName
+          }, iframeOrigin);
+        }
+
+        function refreshAccounts() {
+          var iframeWin = document.getElementById("account-chooser-iframe").contentWindow;
+          console.log('posting message');
+          iframeWin.postMessage({
+            type: 'getAccounts'
+          }, iframeOrigin);
+        }
+
+        function deleteAccount() {
+          var iframeWin = document.getElementById("account-chooser-iframe").contentWindow;
+          console.log('posting message');
+          iframeWin.postMessage({
+            type: 'deleteAccount'
+          }, iframeOrigin);
+        }
+
+        function receiveMessage(event) {
+          if (event.origin === iframeOrigin && event.data) {
+            console.log(event.data);
+            Object.keys(event.data).forEach(function(idpUrl) {
+              $('#content').append('<div style="width: 200px; background: #EEEEEE; padding: 5px 5px; margin-bottom: 10px;"><a href="' + idpUrl + '"><img src="' + idpUrl + '/.well-known/logo"></img><p>' + event.data[idpUrl].login + '</p><p>' + event.data[idpUrl].displayName + '</p></a></div>');
+            });
+          }
+        }
+
+        window.addEventListener("message", receiveMessage, false);
+        </script>
+    </body>
+</html>
