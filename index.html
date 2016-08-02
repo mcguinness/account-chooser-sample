@@ -7,6 +7,7 @@
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+        <script src="/bower_components/pako/dist/pako.js"></script>
     </head>
     <body>
 
@@ -28,6 +29,9 @@
         <div id="content"></div>
         <script>
         var iframeOrigin = 'http://accounts.okta.io:8081';
+        var samlRequest = parseSamlRequest();
+        window.addEventListener("message", receiveMessage, false);
+
         $(document).ready(function() {
           $('body').append('<iframe id="account-chooser-iframe" src="' + iframeOrigin +
             '/discovery/iframe.html" style="display:none;"></iframe>');
@@ -39,10 +43,79 @@
           });
 
           $('#refresh-accounts').click(function() {
-            $('#content').html('');
             refreshAccounts();
           });
+
+          $('#account-chooser-iframe').on('load', function() {
+            refreshAccounts();
+          });
+
         });
+
+        function parseSamlRequest() {
+          var el = document.createElement('a');
+          var parser, samlReq, xmlReq;
+          var issuer, acsUrl;
+
+          el.href = window.location.href;
+          samlReq = getQueryVariable(el.search, 'SAMLRequest');
+
+          if (samlReq) {
+            try {
+              samlReq = zlibDecompress(samlReq);
+            } catch (err) {
+              console.log(err);
+            }
+            console.log('decoded saml request', samlReq);
+            parser = new DOMParser();
+            try {
+              xmlReq = parser.parseFromString(samlReq, 'application/xml');
+              issuer = xmlReq.evaluate("//*[local-name(.)='Issuer']/text()", xmlReq.documentElement, null, XPathResult.ANY_TYPE);
+
+              if (issuer && (issuer = issuer.iterateNext()) && issuer.nodeValue) {
+                issuer = issuer.nodeValue;
+                acsUrl = resolveOktaAcsUrl(issuer);
+                console.log('resolve acs %s for issuer %s', acsUrl, issuer);
+                if (acsUrl) {
+                  return {
+                    issuer: issuer,
+                    acsUrl: acsUrl + el.search
+                  }
+                }
+              }
+            } catch (err) {
+              console.log(err);
+            }
+          }
+        }
+
+        function resolveOktaAcsUrl(issuer) {
+          // Should be a configuration file
+          switch (issuer) {
+            case 'urn:example:sp' :
+              return '/app/raincloud59_simpleserviceprovider_1/exkikd6nFJIdpcrZR0g3/sso/saml';
+            default :
+              break;
+          }
+        }
+
+        function zlibDecompress(base64Content) {
+          // Convert binary string to character-number array
+          var charData = atob(base64Content).split('').map(function(x) { return x.charCodeAt(0); });
+          var decodedData = pako.inflateRaw(new Uint8Array(charData), { to: 'string' });
+          return decodedData;
+        }
+
+        function getQueryVariable(path, variable) {
+          var query = path.substring(1);
+          var vars = query.split('&');
+          for (var i = 0; i < vars.length; i++) {
+              var pair = vars[i].split('=');
+              if (decodeURIComponent(pair[0]) == variable) {
+                  return decodeURIComponent(pair[1]);
+              }
+          }
+        }
 
         function login(login, displayName) {
           var iframeWin = document.getElementById("account-chooser-iframe").contentWindow;
@@ -56,7 +129,7 @@
 
         function refreshAccounts() {
           var iframeWin = document.getElementById("account-chooser-iframe").contentWindow;
-          console.log('posting message');
+          console.log('posting message to iframe');
           iframeWin.postMessage({
             type: 'getAccounts'
           }, iframeOrigin);
@@ -64,22 +137,25 @@
 
         function deleteAccount() {
           var iframeWin = document.getElementById("account-chooser-iframe").contentWindow;
-          console.log('posting message');
+          console.log('posting message to iframe');
           iframeWin.postMessage({
             type: 'deleteAccount'
           }, iframeOrigin);
         }
 
         function receiveMessage(event) {
+          console.log('received message from iframe', event);
           if (event.origin === iframeOrigin && event.data) {
-            console.log(event.data);
-            Object.keys(event.data).forEach(function(idpUrl) {
-              $('#content').append('<div style="width: 200px; background: #EEEEEE; padding: 5px 5px; margin-bottom: 10px;"><a href="' + idpUrl + '"><img src="' + idpUrl + '/.well-known/logo"></img><p>' + event.data[idpUrl].login + '</p><p>' + event.data[idpUrl].displayName + '</p></a></div>');
-            });
+            if (samlRequest.acsUrl) {
+              $('#content').html('');
+              Object.keys(event.data).forEach(function(idpUrl) {
+                $('#content').append('<div class="account" style="width: 200px; background: #EEEEEE; padding: 5px 5px; margin-bottom: 10px;"><img src="' + idpUrl + '/.well-known/logo"></img><p>' + event.data[idpUrl].login + '</p><p>' + event.data[idpUrl].displayName + '</p><a class="btn" href="' +  idpUrl + samlRequest.acsUrl + '">Login</a></div>');
+              });
+            } else {
+              $('#content').html('<h1>Not a valid SAMLRequest</h1>');
+            }
           }
         }
-
-        window.addEventListener("message", receiveMessage, false);
         </script>
     </body>
 </html>

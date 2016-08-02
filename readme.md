@@ -4,6 +4,10 @@ A technology sample that leverages [Web Messaging](https://html.spec.whatwg.org/
 
 # Setup
 
+Install packages
+
+`bower install`
+
 This demo is currently coded to only allow requests from `*.okta.io:8081` origins.
 
 1. Add 2 DNS entries to your `/etc/hosts` file
