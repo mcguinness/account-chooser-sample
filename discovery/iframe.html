@@ -41,6 +41,9 @@
               accounts = JSON.stringify(accounts);
               console.log('updated accounts %s', accounts);
               window.localStorage.setItem('okta_accounts', accounts);
+              event.source.postMessage({
+                messageType: 'processed_login'
+              }, event.origin);
             }
           }
         }
