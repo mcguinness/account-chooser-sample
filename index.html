@@ -23,13 +23,15 @@
           </p>
           <p>
             <input id="add-account" type="button" value="Add Account">
+            <input id="delete-account" type="button" value="Delete Account">
             <input id="refresh-accounts" type="button" value="Refresh Accounts">
           </p>
         </div>
         <div id="content"></div>
         <script>
-        var iframeOrigin = 'http://accounts.okta.io:8081';
+        var iframeOrigin = 'https://accounts.okta.io:8081';
         var samlRequest = parseSamlRequest();
+        var latestAccounts = [];
         window.addEventListener("message", receiveMessage, false);
 
         $(document).ready(function() {
@@ -40,6 +42,10 @@
             login($('#account-login').val(), $('#account-display-name').val());
             $('#account-login').val('');
             $('#account-display-name').val('');
+          });
+
+          $('#delete-account').click(function() {
+            deleteAccount();
           });
 
           $('#refresh-accounts').click(function() {
@@ -119,37 +125,51 @@
 
         function login(login, displayName) {
           var iframeWin = document.getElementById("account-chooser-iframe").contentWindow;
-          console.log('posting message to iframe');
-          iframeWin.postMessage({
-            type: 'login',
+          var message = {
+            messageType: 'login',
             login: login,
             displayName: displayName
-          }, iframeOrigin);
+          };
+          console.log('posting message to iframe:', message);
+          iframeWin.postMessage(message, iframeOrigin);
         }
 
         function refreshAccounts() {
           var iframeWin = document.getElementById("account-chooser-iframe").contentWindow;
-          console.log('posting message to iframe');
-          iframeWin.postMessage({
-            type: 'getAccounts'
-          }, iframeOrigin);
+          var message = { messageType: 'get_accounts' };
+          console.log('posting message to iframe:', message);
+          iframeWin.postMessage(message, iframeOrigin);
         }
 
         function deleteAccount() {
+          var accountId = window.prompt(
+            'Which accountId would you like to delete?\n\n' +
+            latestAccounts.map(function (account) {
+              return account.id;
+            }).join('\n')
+          );
           var iframeWin = document.getElementById("account-chooser-iframe").contentWindow;
-          console.log('posting message to iframe');
-          iframeWin.postMessage({
-            type: 'deleteAccount'
-          }, iframeOrigin);
+          var message = {
+            messageType: 'remove_account',
+            accountId: accountId
+          };
+          console.log('posting message to iframe:', message);
+          iframeWin.postMessage(message, iframeOrigin);
         }
 
         function receiveMessage(event) {
-          console.log('received message from iframe', event);
-          if (event.origin === iframeOrigin && event.data) {
-            if (samlRequest.acsUrl) {
+          if (event.origin !== iframeOrigin || !event.data) {
+            return;
+          }
+
+          console.log('received message from iframe (' + event.origin + '):', event.data);
+
+          if (event.data.messageType === 'processed_get_accounts') {
+            latestAccounts = event.data.accounts;
+            if (samlRequest && samlRequest.acsUrl) {
               $('#content').html('');
-              Object.keys(event.data).forEach(function(idpUrl) {
-                $('#content').append('<div class="account" style="width: 200px; background: #EEEEEE; padding: 5px 5px; margin-bottom: 10px;"><img src="' + idpUrl + '/.well-known/logo"></img><p>' + event.data[idpUrl].login + '</p><p>' + event.data[idpUrl].displayName + '</p><a class="btn" href="' +  idpUrl + samlRequest.acsUrl + '">Login</a></div>');
+              event.data.accounts.forEach(function (account) {
+                $('#content').append('<div class="account" style="width: 200px; background: #EEEEEE; padding: 5px 5px; margin-bottom: 10px;"><img src="' + account.origin + '/.well-known/logo"></img><p>' + account.login + '</p><p>' + account.displayName + '</p><a class="btn" href="' +  account.origin + samlRequest.acsUrl + '">Login</a></div>');
               });
             } else {
               $('#content').html('<h1>Not a valid SAMLRequest</h1>');

@@ -1,0 +1,17 @@
+{
+  "name": "account-chooser-sample",
+  "version": "0.0.1",
+  "description": "A technology sample that leverages [Web Messaging](https://html.spec.whatwg.org/multipage/comms.html#web-messaging) with hidden iframe to provide an account chooser across domains",
+  "scripts": {
+    "test": "eslint . && mocha"
+  },
+  "author": "",
+  "license": "Apache2.0",
+  "devDependencies": {
+    "chai": "^3.5.0",
+    "eslint": "^3.3.1",
+    "mocha": "^3.0.2",
+    "rewire": "^2.5.2",
+    "sinon": "^1.17.5"
+  }
+}
