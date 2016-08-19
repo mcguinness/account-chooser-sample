@@ -45,3 +45,10 @@ To run lint and unit tests:
 ```bash
 [account-chooser-sample]$ npm test
 ```
+
+# Build
+
+1. Run `npm install`
+2. Run 'npm run build'
+
+The build would output everything to the `./dist` folder
