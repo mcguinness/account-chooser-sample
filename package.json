@@ -5,16 +5,17 @@
   "private": true,
   "scripts": {
     "test": "eslint . && mocha",
-    "start": "./node_modules/http-server/bin/http-server --ssl"
+    "start": "./node_modules/http-server/bin/http-server --ssl",
+    "build": "rm -rf dist && mkdir dist && cp -R css dist/css && cp -R discovery dist/discovery && cp -R font dist/font && cp -R img dist/img && cp -R js dist/js && cp -R lib dist/lib && cp index.html dist/index.html && sed -i.backup 's!https://login.okta.io:8080!https://login.okta.com!g' dist/index.html && rm -f dist/index.html.backup"
   },
   "author": "",
   "license": "Apache2.0",
   "devDependencies": {
     "chai": "^3.5.0",
     "eslint": "^3.3.1",
+    "http-server": "^0.9.0",
     "mocha": "^3.0.2",
     "rewire": "^2.5.2",
-    "sinon": "^1.17.5",
-    "http-server": "^0.9.0"
+    "sinon": "^1.17.5"
   }
 }
