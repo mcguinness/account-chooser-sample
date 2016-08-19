@@ -6,42 +6,37 @@ A technology sample that leverages [Web Messaging](https://html.spec.whatwg.org/
 
 Install packages
 
-`bower install`
 `npm install`
 
-This demo is currently coded to only allow requests from `*.okta.io:8081` origins.
+This demo is currently coded to only allow requests from `*.okta.io:8080` origins.
 
 1. Add 2 DNS entries to your `/etc/hosts` file
-- `127.0.0.1 accounts.okta.io`
+- `127.0.0.1 login.okta.io`
 - `127.0.0.1 example.okta.io`
-2. Launch web server on port 8081 to serve static content
 
 ## Trusted Origin Whitelist
 
-This sample implements a root domain whitelist that only allows trusted callers.  This is a security-best practice for cross-origin web messaging.
+This project implements a root domain whitelist that only allows trusted callers.  This is a security-best practice for cross-origin web messaging.
 
 You can modify the whitelist by changing the following variables:
 
 index.html
 
 ```js
-var iframeOrigin = 'https://accounts.okta.io:8081';
+var iframeOrigin = 'https://login.okta.io:8080';
 ```
 
 discovery/iframe.html
 
 ```js
-var trustedRootDomains = ['okta.io:8081'];
+var trustedRootDomains = ['okta.io:8080'];
 ```
 
 # Demo
 
-1. Launch `https://example.okta.io:8081` and add an account
-2. Launch `https://accounts.okta.io:8081` and refresh accounts
-
-> You can use [http-server: a command-line http server](https://github.com/indexzero/http-server) if you don't have an existing web server on your developer machine.
->
-> **Note: You'll need to run http-server with the `--ssl` option.**
+1. Run `npm start` to launch web server
+1. Launch `https://login.okta.io:8080/test.html` and add an account
+2. Launch `https://login.okta.io:8080` and select account
 
 ## Development
 

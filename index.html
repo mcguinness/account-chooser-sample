@@ -1,181 +1,327 @@
-<!doctype html>
-<html class="no-js" lang="">
-    <head>
-        <meta charset="utf-8">
-        <meta http-equiv="x-ua-compatible" content="ie=edge">
-        <title></title>
-        <meta name="description" content="">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-        <script src="/bower_components/pako/dist/pako.js"></script>
-    </head>
-    <body>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Okta Account Chooser</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="css/okta-sign-in.css" type="text/css" rel="stylesheet" />
+    <link href="css/okta-theme.css" type="text/css" rel="stylesheet" />
+    <script src="js/jquery.slim.min.js"></script>
+    <script src="js/pako.js"></script>
+    <script src="js/underscore-min.js"></script>
+</head>
+<body class="auth">
+  <script type="text/template" class="account-template">
+    <div class="picker-fieldset">
+      <div class="picker-account-delete">
+        <a class="deleteAccount" data-id="<%- id %>" href="#">
+          <div class="delete-icon">' +
+          </div>
+        </a>
+      </div>
+      <div class="picker-account">
+        <a href="<%- acsUrl %>">
+          <table>
+            <tr>
+              <td>
+                <div class="account-logo">
+                  <img src="<%- orgUrl %>/.well-known/logo" />
+                </div>
+              </td>
+              <td>
+                <div class="account-info">
+                  <p class="name"><%- displayName %></p>
+                  <p class="email"><%- login %></p>
+                </div>
+              </td>
+            </tr>
+          </table>
+        </a>
+      </div>
+      <div class="picker-account-arrow">
+        <a href="<%- acsUrl %>">
+          <div class="arrow-icon">
+          </div>
+        </a>
+      </div>
+    </div>
+  </script>
 
-        <div id="form">
-          <h2>Add Account</h2>
-          <p>
-            <label for="account-login">Login: </label>
-            <input id="account-login" type="text">
-          </p>
-          <p>
-            <label for="account-display-name">Display name: </label>
-            <input id="account-display-name" type="text">
-          </p>
-          <p>
-            <input id="add-account" type="button" value="Add Account">
-            <input id="delete-account" type="button" value="Delete Account">
-            <input id="refresh-accounts" type="button" value="Refresh Accounts">
-          </p>
+  <div style="background-image: url(&quot;img/misc/bg-balloon.jpg&quot;);" data-se="login-bg-image" class="login-bg-image">
+  </div>
+  <div id="okta-login-container" class="picker-container">
+    <div id="okta-sign-in" class="auth-container main-container no-beacon">
+      <div class="okta-sign-in-header auth-header">
+        <img src="img/logo_okta.png" class="auth-org-logo">
+        <div data-type="beacon-container" class="beacon-container"></div>
+      </div>
+      <div id="add-an-account" class="auth-content">
+        <div class="auth-content-inner">
+          <div class="primary-auth">
+            <div data-se="o-form-content" class="o-form-content o-form-theme clearfix">
+              <h2 data-se="o-form-head" class="okta-form-title o-form-head">
+                Enter your Okta organization
+              </h2>
+              <div class="o-form-error-container" data-se="o-form-error-container">
+                <div class="header-message"></div>
+              </div>
+              <div class="picker-select picker-fieldset okta-form-input-field input-fix">
+                <table>
+                  <tr>
+                    <td>
+                      <input placeholder="mycompany" name="mycompany" id="mycompany" class=
+                      "mycompany" value="" autocomplete="off" type="text">
+                    </td>
+                    <td>
+                      <div class="period">
+                        <div>
+                          .
+                        </div>
+                      </div>
+                    </td>
+                    <td>
+                      <div class="selectdiv">
+                        <select id="okta-options" class="okta-dropdown-option">
+                          <option>
+                            okta.com
+                          </option>
+                          <option>
+                            okta-emea.com
+                          </option>
+                          <option>
+                            oktapreview.com
+                          </option>
+                        </select>
+                      </div>
+                    </td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+            <div class="o-form-button-bar">
+              <input id="go-account" value="Go" class="button button-primary disabled" type=
+              "submit">
+            </div><!--
+            <div>
+                <ul class="help-links js-help-links">
+                    <li><a href="#" class="link">Sign in as regular user</a></li>
+                    <li><a href="#" class="link" target="_blank">Create an account</a></li>
+                </ul>
+            </div>
+          -->
+          </div>
         </div>
-        <div id="content"></div>
-        <script>
-        var iframeOrigin = 'https://accounts.okta.io:8081';
-        var samlRequest = parseSamlRequest();
-        var latestAccounts = [];
-        window.addEventListener("message", receiveMessage, false);
+      </div>
+      <div id="choose-an-account" class="auth-content">
+        <div class="auth-content-inner">
+          <div class="primary-auth">
+            <div data-se="o-form-content" class="o-form-content o-form-theme clearfix">
+              <h2 data-se="o-form-head" class="okta-form-title o-form-head">
+                Choose an account
+              </h2>
+              <div class="o-form-error-container" data-se="o-form-error-container">
+                <div class="header-message"></div>
+              </div>
+              <div class="o-form-fieldset-container" data-se="o-form-fieldset-container">
+                <div id="picker-section"></div>
+                <div class="picker-fieldset">
+                  <div class="picker-account add-account">
+                    <a href="#" id="link-add-account" class="label" name="link-add-account">
+                    <div class="add-icon"></div>
+                    Add Account
+                  </div>
+                  <div class="picker-account-arrow"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="footer">
+    <div class="footer-container clearfix">
+      <p class="copyright">
+        Powered by <a class="inline-block notranslate" href="http://www.okta.com/">Okta</a>
+      </p>
+      <p class="privacy-policy">
+        <a class="inline-block margin-l-10" target="_blank" href=
+        "http://www.okta.com/privacy">Privacy Policy</a>
+      </p>
+    </div>
+  </div>
 
-        $(document).ready(function() {
-          $('body').append('<iframe id="account-chooser-iframe" src="' + iframeOrigin +
-            '/discovery/iframe.html" style="display:none;"></iframe>');
+  <iframe id="account-chooser-iframe" src="discovery/iframe.html" style="display:none;"></iframe>
 
-          $('#add-account').click(function() {
-            login($('#account-login').val(), $('#account-display-name').val());
-            $('#account-login').val('');
-            $('#account-display-name').val('');
-          });
+  <script>
+    var iframeOrigin = 'https://login.okta.io:8080';
+    window.addEventListener("message", receiveMessage, false);
 
-          $('#delete-account').click(function() {
-            deleteAccount();
-          });
+    $(document).ready(function() {
 
-          $('#refresh-accounts').click(function() {
-            refreshAccounts();
-          });
-
-          $('#account-chooser-iframe').on('load', function() {
-            refreshAccounts();
-          });
-
+        $('#picker-section').html('');
+        $('#go-account').prop('disabled', true);
+        $('#mycompany').keyup(function () {
+            if ($(this).val() != '') {
+                $('#go-account').prop('disabled', false);
+                $('#go-account').removeClass('disabled');
+            } else {
+                $('#go-account').prop('disabled', true);
+                $('#go-account').addClass('disabled');
+            }
         });
 
-        function parseSamlRequest() {
-          var el = document.createElement('a');
-          var parser, samlReq, xmlReq;
-          var issuer, acsUrl;
+        $('#go-account').click(function(e) {
+          e.preventDefault();
+          var orgUrl = 'https://' + $('#mycompany').val().trim() + '.' +
+            $('#okta-options option:selected').text().trim();
+          window.location.replace(window.getAppLink(orgUrl));
+        });
 
-          el.href = window.location.href;
-          samlReq = getQueryVariable(el.search, 'SAMLRequest');
+        $('#link-add-account').click(function(e) {
+          e.preventDefault();
+          $('.header-message').html('');
+          $('#add-an-account').show();
+          $('#choose-an-account').hide();
+        });
 
-          if (samlReq) {
-            try {
-              samlReq = zlibDecompress(samlReq);
-            } catch (err) {
-              console.log(err);
-            }
-            console.log('decoded saml request', samlReq);
-            parser = new DOMParser();
-            try {
-              xmlReq = parser.parseFromString(samlReq, 'application/xml');
-              issuer = xmlReq.evaluate("//*[local-name(.)='Issuer']/text()", xmlReq.documentElement, null, XPathResult.ANY_TYPE);
+        $('#picker-section').on('click', 'a.deleteAccount', function () {
+            var idp = $(this).data('idp');
+            var iframeWin = document.getElementById("account-chooser-iframe").contentWindow;
+            console.log('posting message to iframe: deleteAccount');
+            iframeWin.postMessage({
+                type: 'deleteAccount',
+                origin: idp
+            }, iframeOrigin);
+        });
 
-              if (issuer && (issuer = issuer.iterateNext()) && issuer.nodeValue) {
-                issuer = issuer.nodeValue;
-                acsUrl = resolveOktaAcsUrl(issuer);
-                console.log('resolve acs %s for issuer %s', acsUrl, issuer);
-                if (acsUrl) {
-                  return {
-                    issuer: issuer,
-                    acsUrl: acsUrl + el.search
-                  }
-                }
-              }
-            } catch (err) {
-              console.log(err);
-            }
+        $('#account-chooser-iframe').on('load', function () {
+            setTimeout(function () { sendMessage('get_accounts'); }, 500);
+        });
+    });
+
+    function getAppLink(orgUrl) {
+      var pattern = /^(https?:\/\/)?([A-Za-z0-9-]{1,63})(\.\S+)/;
+      var matches = orgUrl.match(pattern);
+
+      if (matches && matches.length === 4) {
+        var url = [];
+        url.push(matches[1]);
+
+        var el = document.createElement('a');
+        el.href = window.location.href;
+
+        var request = getQueryVariable(el.search, 'SAMLRequest');
+        var issuer = parseSamlRequest(request);
+        var acsUrl = getSamlAcsUrl(issuer);
+
+        if (acsUrl.toLowerCase().indexOf('/admin/') === 0) {
+          url.push(matches[2] + '-admin');
+        } else {
+          url.push(matches[2]);
+        }
+
+        url.push(matches[3]);
+        url.push(acsUrl);
+        url.push('?');
+        url.push(request);
+        url.push(getQueryVariable(el.search, 'RelayState'));
+
+        return url.join('');
+      }
+    }
+
+    function getSamlAcsUrl(issuer) {
+      if (issuer && issuer.toLowerCase().indexOf('influitive') > -1) {
+        return '/admin/crossorg/sso/ozone';
+      } else {
+        return '/user/sso/corpwebsite';
+      }
+    }
+
+    function parseSamlRequest(req) {
+      if (req) {
+        try {
+          req = zlibDecompress(req);
+        } catch (err) {
+          console.log('Unable to decompress SAMLRequest', err);
+        }
+        console.log('decoded saml request:', req);
+        var parser = new DOMParser();
+        try {
+          var xmlDoc = parser.parseFromString(req, 'application/xml');
+          var node = xmlDoc.evaluate("//*[local-name(.)='Issuer']/text()", xmlDoc.documentElement, null, XPathResult.FIRST_ORDERED_NODE_TYPE).singleNodeValue;
+          if (node && node.nodeType === 3) {
+            return node.textContent;
+          }
+        } catch (err) {
+          console.log('Unable to parse SAMLRequest', err);
+        }
+      }
+    }
+
+    function zlibDecompress(base64Content) {
+      // Convert binary string to character-number array
+      var charData = atob(base64Content).split('').map(function (x) { return x.charCodeAt(0); });
+      var decodedData = pako.inflateRaw(new Uint8Array(charData), { to: 'string' });
+      return decodedData;
+    }
+
+    function getQueryVariable(path, variable) {
+      if (path && variable) {
+        var query = path.substring(1);
+        var vars = query.split('&');
+        for (var i = 0; i < vars.length; i++) {
+          var pair = vars[i].split('=');
+          if (decodeURIComponent(pair[0]) == variable) {
+            return decodeURIComponent(pair[1]);
           }
         }
+      }
+    }
 
-        function resolveOktaAcsUrl(issuer) {
-          // Should be a configuration file
-          switch (issuer) {
-            case 'urn:example:sp' :
-              return '/app/raincloud59_simpleserviceprovider_1/exkikd6nFJIdpcrZR0g3/sso/saml';
-            default :
-              break;
-          }
-        }
+    function sendMessage(messageType) {
+      var iframeWin = document.getElementById("account-chooser-iframe").contentWindow;
+      iframeWin.postMessage({
+        messageType: messageType
+      }, iframeOrigin);
+    }
 
-        function zlibDecompress(base64Content) {
-          // Convert binary string to character-number array
-          var charData = atob(base64Content).split('').map(function(x) { return x.charCodeAt(0); });
-          var decodedData = pako.inflateRaw(new Uint8Array(charData), { to: 'string' });
-          return decodedData;
-        }
+    function renderAccounts(accounts) {
+      var template = _.template(
+        $('script.account-template').html()
+      );
 
-        function getQueryVariable(path, variable) {
-          var query = path.substring(1);
-          var vars = query.split('&');
-          for (var i = 0; i < vars.length; i++) {
-              var pair = vars[i].split('=');
-              if (decodeURIComponent(pair[0]) == variable) {
-                  return decodeURIComponent(pair[1]);
-              }
-          }
-        }
+      var el = $('#picker-section');
+      el.html('');
+      accounts.forEach(function(account) {
+        el.append(template({
+          id: account.id,
+          orgUrl: account.origin,
+          acsUrl: getAppLink(account.origin),
+          login: account.login,
+          displayName: account.displayName
+        }));
+      })
 
-        function login(login, displayName) {
-          var iframeWin = document.getElementById("account-chooser-iframe").contentWindow;
-          var message = {
-            messageType: 'login',
-            login: login,
-            displayName: displayName
-          };
-          console.log('posting message to iframe:', message);
-          iframeWin.postMessage(message, iframeOrigin);
-        }
+      $('#link-add-account').show();
+    }
 
-        function refreshAccounts() {
-          var iframeWin = document.getElementById("account-chooser-iframe").contentWindow;
-          var message = { messageType: 'get_accounts' };
-          console.log('posting message to iframe:', message);
-          iframeWin.postMessage(message, iframeOrigin);
-        }
-
-        function deleteAccount() {
-          var accountId = window.prompt(
-            'Which accountId would you like to delete?\n\n' +
-            latestAccounts.map(function (account) {
-              return account.id;
-            }).join('\n')
-          );
-          var iframeWin = document.getElementById("account-chooser-iframe").contentWindow;
-          var message = {
-            messageType: 'remove_account',
-            accountId: accountId
-          };
-          console.log('posting message to iframe:', message);
-          iframeWin.postMessage(message, iframeOrigin);
-        }
-
-        function receiveMessage(event) {
-          if (event.origin !== iframeOrigin || !event.data) {
-            return;
-          }
-
-          console.log('received message from iframe (' + event.origin + '):', event.data);
-
-          if (event.data.messageType === 'processed_get_accounts') {
-            latestAccounts = event.data.accounts;
-            if (samlRequest && samlRequest.acsUrl) {
-              $('#content').html('');
-              event.data.accounts.forEach(function (account) {
-                $('#content').append('<div class="account" style="width: 200px; background: #EEEEEE; padding: 5px 5px; margin-bottom: 10px;"><img src="' + account.origin + '/.well-known/logo"></img><p>' + account.login + '</p><p>' + account.displayName + '</p><a class="btn" href="' +  account.origin + samlRequest.acsUrl + '">Login</a></div>');
-              });
+    function receiveMessage(event) {
+      console.log('received message from iframe:', event);
+      if (event.origin === iframeOrigin && event.data && event.data.messageType) {
+        switch (event.data.messageType) {
+          case 'processed_get_accounts' :
+            if (event.data.accounts && event.data.accounts.length) {
+              renderAccounts(event.data.accounts);
             } else {
-              $('#content').html('<h1>Not a valid SAMLRequest</h1>');
+              $('.header-message').html('');
+              $('#link-add-account').click();
             }
-          }
+            break;
         }
-        </script>
-    </body>
+      }
+    }
+  </script>
+</body>
 </html>

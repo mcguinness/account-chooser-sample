@@ -1,9 +1,11 @@
 {
-  "name": "account-chooser-sample",
+  "name": "okta-account-chooser",
   "version": "0.0.1",
-  "description": "A technology sample that leverages [Web Messaging](https://html.spec.whatwg.org/multipage/comms.html#web-messaging) with hidden iframe to provide an account chooser across domains",
+  "description": "Okta Account Chooser",
+  "private": true,
   "scripts": {
-    "test": "eslint . && mocha"
+    "test": "eslint . && mocha",
+    "start": "./node_modules/http-server/bin/http-server --ssl"
   },
   "author": "",
   "license": "Apache2.0",
@@ -12,6 +14,7 @@
     "eslint": "^3.3.1",
     "mocha": "^3.0.2",
     "rewire": "^2.5.2",
-    "sinon": "^1.17.5"
+    "sinon": "^1.17.5",
+    "http-server": "^0.9.0"
   }
 }

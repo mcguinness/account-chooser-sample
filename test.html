@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Okta Account Chooser - Add Account Test Page</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="js/jquery.slim.min.js"></script>
+    <script src="js/underscore-min.js"></script>
+</head>
+<body>
+  <iframe id="account-chooser-iframe" src="discovery/iframe.html" style="display:none;"></iframe>
+  <h1>Add Account</h1>
+  <div>
+    <input type="text" placeholder="Username" name="username" id="username" value="" autocomplete="off">
+    <input type="text" placeholder="Display Name" name="displayName" id="displayName" value="" autocomplete="off">
+    <button name="addAccount" id="addAccount">Add</button>
+  </div>
+
+  <script>
+    var iframeOrigin = 'https://login.okta.io:8080';
+    window.addEventListener("message", receiveMessage, false);
+
+    $(document).ready(function() {
+      $('#addAccount').click(function() {
+        var iframeWin = document.getElementById("account-chooser-iframe").contentWindow;
+        iframeWin.postMessage({
+          messageType: 'login',
+          login: $('#username').val().trim(),
+          displayName: $('#displayName').val().trim()
+        }, iframeOrigin);
+      })
+    });
+
+    function receiveMessage(event) {
+      console.log('received message from iframe:', event);
+      if (event.origin === iframeOrigin && event.data && event.data.messageType) {
+        if (event.data.messageType === 'processed_login') {
+          alert('Successfully added an account for ' + $('#username').val().trim());
+        }
+      }
+    }
+  </script>
+</body>
