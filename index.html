@@ -102,7 +102,7 @@
         </div>
       </div>
     </div>
-    <div id="account-chooser-form" class="auth-content">
+    <div id="account-chooser-form" class="auth-content" style="display:none">
       <div class="auth-content-inner">
         <div data-se="o-form-content" class="o-form-content o-form-theme clearfix">
           <h2 data-se="o-form-head" class="okta-form-title o-form-head">
@@ -280,9 +280,9 @@
           login: account.login,
           displayName: account.displayName
         }));
-      })
+      });
 
-      $('#link-add-account').show();
+      $('#account-chooser-form').show();
     }
 
     function receiveMessage(event) {
@@ -293,7 +293,7 @@
             if (event.data.accounts && event.data.accounts.length) {
               renderAccounts(event.data.accounts);
             } else {
-              $('#link-add-account').click();
+              $('#add-account-form').show();
             }
             break;
         }
