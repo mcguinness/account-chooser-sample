@@ -5,140 +5,123 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link href="css/okta-sign-in.css" type="text/css" rel="stylesheet" />
-    <link href="css/okta-theme.css" type="text/css" rel="stylesheet" />
     <script src="js/jquery.slim.min.js"></script>
     <script src="js/pako.js"></script>
     <script src="js/underscore-min.js"></script>
 </head>
 <body class="auth">
   <script type="text/template" class="account-template">
-    <div class="picker-fieldset">
-      <div class="picker-account-delete">
-        <a class="deleteAccount" data-id="<%- id %>" href="#">
-          <div class="delete-icon">' +
-          </div>
-        </a>
-      </div>
-      <div class="picker-account">
-        <a href="<%- acsUrl %>">
+    <div class="account-container" data-id="<%- id %>">
+        <div class="account-content">
           <table>
             <tr>
               <td>
-                <div class="account-logo">
-                  <img src="<%- orgUrl %>/.well-known/logo" />
+                <div class="account-remove">
                 </div>
               </td>
-              <td>
-                <div class="account-info">
-                  <p class="name"><%- displayName %></p>
-                  <p class="email"><%- login %></p>
-                </div>
-              </td>
+              <a ref="<%- acsUrl %>">
+                <td>
+                  <div class="account-logo">
+                    <img src="<%- orgUrl %>/.well-known/logo" />
+                  </div>
+                </td>
+                <td>
+                  <div class="account-info">
+                    <p class="name"><%- displayName %></p>
+                    <p class="email"><%- login %></p>
+                  </div>
+                </td>
+                <td>
+                  <div class="account-arrow"></div>
+                </td>
+              </a>
             </tr>
           </table>
-        </a>
-      </div>
-      <div class="picker-account-arrow">
-        <a href="<%- acsUrl %>">
-          <div class="arrow-icon">
-          </div>
-        </a>
-      </div>
+        </div>
     </div>
   </script>
 
   <div style="background-image: url(&quot;img/misc/bg-balloon.jpg&quot;);" data-se="login-bg-image" class="login-bg-image">
   </div>
-  <div id="okta-login-container" class="picker-container">
-    <div id="okta-sign-in" class="auth-container main-container no-beacon">
-      <div class="okta-sign-in-header auth-header">
-        <img src="img/logo_okta.png" class="auth-org-logo">
-        <div data-type="beacon-container" class="beacon-container"></div>
-      </div>
-      <div id="add-an-account" class="auth-content">
-        <div class="auth-content-inner">
-          <div class="primary-auth">
-            <div data-se="o-form-content" class="o-form-content o-form-theme clearfix">
-              <h2 data-se="o-form-head" class="okta-form-title o-form-head">
-                Enter your Okta organization
-              </h2>
-              <div class="o-form-error-container" data-se="o-form-error-container">
-                <div class="header-message"></div>
-              </div>
-              <div class="picker-select picker-fieldset okta-form-input-field input-fix">
-                <table>
-                  <tr>
-                    <td>
-                      <input placeholder="mycompany" name="mycompany" id="mycompany" class=
-                      "mycompany" value="" autocomplete="off" type="text">
-                    </td>
-                    <td>
-                      <div class="period">
-                        <div>
-                          .
-                        </div>
+
+  <div id="okta-account-chooser" class="auth-container main-container no-beacon">
+    <div class="auth-header">
+      <img src="img/logo_okta.png" class="auth-org-logo">
+    </div>
+    <div id="add-account-form" class="auth-content">
+      <div class="auth-content-inner">
+        <div class="account-chooser">
+          <div data-se="o-form-content" class="o-form-content o-form-theme clearfix">
+            <h2 data-se="o-form-head" class="okta-form-title o-form-head">
+              Enter your Okta organization
+            </h2>
+            <div class="okta-form-input-field input-fix">
+              <table>
+                <tr>
+                  <td>
+                    <input placeholder="mycompany" name="subdomain" id="subdomain" class=
+                    "subdomain" value="" autocomplete="off" type="text">
+                  </td>
+                  <td>
+                    <div class="period">
+                      <div>
+                        .
                       </div>
-                    </td>
-                    <td>
-                      <div class="selectdiv">
-                        <select id="okta-options" class="okta-dropdown-option">
-                          <option>
-                            okta.com
-                          </option>
-                          <option>
-                            okta-emea.com
-                          </option>
-                          <option>
-                            oktapreview.com
-                          </option>
-                        </select>
-                      </div>
-                    </td>
-                  </tr>
-                </table>
-              </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="select-container">
+                      <select id="okta-options" class="okta-dropdown-option">
+                        <option>
+                          okta.com
+                        </option>
+                        <option>
+                          okta-emea.com
+                        </option>
+                        <option>
+                          oktapreview.com
+                        </option>
+                      </select>
+                    </div>
+                  </td>
+                </tr>
+              </table>
             </div>
-            <div class="o-form-button-bar">
-              <input id="go-account" value="Go" class="button button-primary disabled" type=
-              "submit">
-            </div><!--
-            <div>
-                <ul class="help-links js-help-links">
-                    <li><a href="#" class="link">Sign in as regular user</a></li>
-                    <li><a href="#" class="link" target="_blank">Create an account</a></li>
-                </ul>
-            </div>
-          -->
           </div>
+          <div class="o-form-button-bar">
+            <input id="btn-account-sign-in" value="Go" class="button button-primary" type=
+            "submit">
+          </div><!--
+          <div>
+              <ul class="help-links js-help-links">
+                  <li><a href="#" class="link">Sign in as regular user</a></li>
+                  <li><a href="#" class="link" target="_blank">Create an account</a></li>
+              </ul>
+          </div>
+        -->
         </div>
       </div>
-      <div id="choose-an-account" class="auth-content">
-        <div class="auth-content-inner">
-          <div class="primary-auth">
-            <div data-se="o-form-content" class="o-form-content o-form-theme clearfix">
-              <h2 data-se="o-form-head" class="okta-form-title o-form-head">
-                Choose an account
-              </h2>
-              <div class="o-form-error-container" data-se="o-form-error-container">
-                <div class="header-message"></div>
-              </div>
-              <div class="o-form-fieldset-container" data-se="o-form-fieldset-container">
-                <div id="picker-section"></div>
-                <div class="picker-fieldset">
-                  <div class="picker-account add-account">
-                    <a href="#" id="link-add-account" class="label" name="link-add-account">
-                    <div class="add-icon"></div>
-                    Add Account
-                  </div>
-                  <div class="picker-account-arrow"></div>
-                </div>
-              </div>
+    </div>
+    <div id="account-chooser-form" class="auth-content">
+      <div class="auth-content-inner">
+        <div data-se="o-form-content" class="o-form-content o-form-theme clearfix">
+          <h2 data-se="o-form-head" class="okta-form-title o-form-head">
+            Choose an account
+          </h2>
+          <div class="o-form-fieldset-container" data-se="o-form-fieldset-container">
+            <div id="accounts-content" class="accounts-content clearfix"></div>
+            <div class="add-account-content clearfix">
+              <a href="#" id="link-add-account" class="label" name="link-add-account">
+                <div class="add-icon"></div>
+                Add Account
+              </a>
             </div>
           </div>
         </div>
       </div>
     </div>
   </div>
+
   <div class="footer">
     <div class="footer-container clearfix">
       <p class="copyright">
@@ -155,49 +138,44 @@
 
   <script>
     var iframeOrigin = 'https://login.okta.io:8080';
-    window.addEventListener("message", receiveMessage, false);
+    window.addEventListener('message', receiveMessage, false);
 
     $(document).ready(function() {
 
-        $('#picker-section').html('');
-        $('#go-account').prop('disabled', true);
-        $('#mycompany').keyup(function () {
-            if ($(this).val() != '') {
-                $('#go-account').prop('disabled', false);
-                $('#go-account').removeClass('disabled');
-            } else {
-                $('#go-account').prop('disabled', true);
-                $('#go-account').addClass('disabled');
-            }
-        });
-
-        $('#go-account').click(function(e) {
-          e.preventDefault();
-          var orgUrl = 'https://' + $('#mycompany').val().trim() + '.' +
+      $('#btn-account-sign-in').click(function(e) {
+        e.preventDefault();
+        var subdomain = $('#subdomain').val();
+        if (subdomain) {
+          var orgUrl = 'https://' + subdomain.trim() + '.' +
             $('#okta-options option:selected').text().trim();
           window.location.replace(window.getAppLink(orgUrl));
-        });
+        } else {
+          $('#subdomain').addClass('shake');
+        }
+      });
 
-        $('#link-add-account').click(function(e) {
-          e.preventDefault();
-          $('.header-message').html('');
-          $('#add-an-account').show();
-          $('#choose-an-account').hide();
-        });
+      $('#subdomain').keydown(function () {
+        $('#subdomain').removeClass('shake');
+      });
 
-        $('#picker-section').on('click', 'a.deleteAccount', function () {
-            var idp = $(this).data('idp');
-            var iframeWin = document.getElementById("account-chooser-iframe").contentWindow;
-            console.log('posting message to iframe: deleteAccount');
-            iframeWin.postMessage({
-                type: 'deleteAccount',
-                origin: idp
-            }, iframeOrigin);
-        });
+      $('#link-add-account').click(function(e) {
+        e.preventDefault();
+        $('#add-account-form').show();
+        $('#account-chooser-form').hide();
+      });
 
-        $('#account-chooser-iframe').on('load', function () {
-            setTimeout(function () { sendMessage('get_accounts'); }, 500);
+      $('.account-content:hover:before ').on('click', function(e) {
+        e.preventDefault();
+        console.log('delete clicked');
+        window.sendMessage({
+          messageType: 'remove_account',
+          accountId: $(this).data('id')
         });
+      });
+
+      $('#account-chooser-iframe').on('load', function () {
+          setTimeout(function () { sendMessage('get_accounts'); }, 500);
+      });
     });
 
     function getAppLink(orgUrl) {
@@ -281,7 +259,7 @@
     }
 
     function sendMessage(messageType) {
-      var iframeWin = document.getElementById("account-chooser-iframe").contentWindow;
+      var iframeWin = document.getElementById('account-chooser-iframe').contentWindow;
       iframeWin.postMessage({
         messageType: messageType
       }, iframeOrigin);
@@ -292,7 +270,7 @@
         $('script.account-template').html()
       );
 
-      var el = $('#picker-section');
+      var el = $('#accounts-content');
       el.html('');
       accounts.forEach(function(account) {
         el.append(template({
@@ -315,7 +293,6 @@
             if (event.data.accounts && event.data.accounts.length) {
               renderAccounts(event.data.accounts);
             } else {
-              $('.header-message').html('');
               $('#link-add-account').click();
             }
             break;
