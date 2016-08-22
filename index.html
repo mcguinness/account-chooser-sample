@@ -164,12 +164,11 @@
         $('#account-chooser-form').hide();
       });
 
-      $('.account-content:hover:before ').on('click', function(e) {
+      $('#okta-account-chooser').on('click', 'div.account-remove', function(e) {
         e.preventDefault();
         console.log('delete clicked');
-        window.sendMessage({
-          messageType: 'remove_account',
-          accountId: $(this).data('id')
+        window.sendMessage('remove_account', {
+          accountId: $(this).parents('.account-container').data('id')
         });
       });
 
@@ -258,11 +257,12 @@
       }
     }
 
-    function sendMessage(messageType) {
+    function sendMessage(messageType, data) {
+      data = data || {};
       var iframeWin = document.getElementById('account-chooser-iframe').contentWindow;
-      iframeWin.postMessage({
-        messageType: messageType
-      }, iframeOrigin);
+      iframeWin.postMessage(
+        _.defaults(data, { messageType: messageType }),
+        iframeOrigin);
     }
 
     function renderAccounts(accounts) {
@@ -294,6 +294,20 @@
               renderAccounts(event.data.accounts);
             } else {
               $('#add-account-form').show();
+            }
+            break;
+          case 'processed_remove_account' :
+            console.log('successfully delete account %s', event.data.accountId);
+            if (event.data.accountId) {
+              var el = $('#okta-account-chooser [data-id="' + event.data.accountId + '"]');
+              if (el) {
+                if ($('#okta-account-chooser div.account-container').length === 1) {
+                  $('#account-chooser-form').hide();
+                  $('#add-account-form').show();
+                } else {
+                  el.remove();
+                }
+              }
             }
             break;
         }
