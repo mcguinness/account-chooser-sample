@@ -19,22 +19,24 @@
                 <div class="account-remove">
                 </div>
               </td>
-              <a ref="<%- acsUrl %>">
-                <td>
-                  <div class="account-logo">
-                    <img src="<%- orgUrl %>/.well-known/logo" />
-                  </div>
-                </td>
-                <td>
+              <td>
+                <div class="account-logo">
+                  <img src="<%- orgUrl %>/.well-known/logo" />
+                </div>
+              </td>
+              <td>
+                <a href="<%- acsUrl %>">
                   <div class="account-info">
                     <p class="name"><%- displayName %></p>
                     <p class="email"><%- login %></p>
                   </div>
-                </td>
-                <td>
+                </a>
+              </td>
+              <td>
+                <a href="<%- acsUrl %>">
                   <div class="account-arrow"></div>
-                </td>
-              </a>
+                </a>
+              </td>
             </tr>
           </table>
         </div>
@@ -154,8 +156,12 @@
         }
       });
 
-      $('#subdomain').keydown(function () {
-        $('#subdomain').removeClass('shake');
+      $('#subdomain').keydown(function(e) {
+        if (e.keyCode == 13) {
+          $('#btn-account-sign-in').click();
+        } else {
+          $('#subdomain').removeClass('shake');
+        }
       });
 
       $('#link-add-account').click(function(e) {
@@ -164,7 +170,7 @@
         $('#account-chooser-form').hide();
       });
 
-      $('#okta-account-chooser').on('click', 'div.account-remove', function(e) {
+      $('#okta-account-chooser div.accounts-content').on('click', 'div.account-remove', function(e) {
         e.preventDefault();
         console.log('delete clicked');
         window.sendMessage('remove_account', {
