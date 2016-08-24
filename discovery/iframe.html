@@ -12,10 +12,14 @@
     <script>
       var trustedRootDomains = [
         'okta.io:8080',
+        'trexcloud.com',
         'okta.com',
         'oktapreview.com',
         'okta-emea.com'
       ];
       startAccountStorage(trustedRootDomains);
+      if (parent) {
+        parent.postMessage({ messageType: 'iframe_loaded' }, '*');
+      }
     </script>
   </body>

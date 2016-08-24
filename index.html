@@ -43,10 +43,7 @@
     </div>
   </script>
 
-  <div style="background-image: url(&quot;img/misc/bg-balloon.jpg&quot;);" data-se="login-bg-image" class="login-bg-image">
-  </div>
-
-  <div id="okta-account-chooser" class="auth-container main-container no-beacon">
+  <div id="okta-account-chooser" class="auth-container main-container no-beacon" style="display:none">
     <div class="auth-header">
       <img src="img/logo_okta.png" class="auth-org-logo">
     </div>
@@ -144,6 +141,8 @@
 
     $(document).ready(function() {
 
+      var initialized = false;
+
       $('#btn-account-sign-in').click(function(e) {
         e.preventDefault();
         var subdomain = $('#subdomain').val();
@@ -172,14 +171,15 @@
 
       $('#okta-account-chooser div.accounts-content').on('click', 'div.account-remove', function(e) {
         e.preventDefault();
-        console.log('delete clicked');
         window.sendMessage('remove_account', {
           accountId: $(this).parents('.account-container').data('id')
         });
       });
 
       $('#account-chooser-iframe').on('load', function () {
-          setTimeout(function () { sendMessage('get_accounts'); }, 500);
+          setTimeout(function () {
+
+          }, 500);
       });
     });
 
@@ -287,29 +287,43 @@
           displayName: account.displayName
         }));
       });
+    }
 
-      $('#account-chooser-form').show();
+    function displayChooser(accounts) {
+      if (accounts && accounts.length) {
+        $('#account-chooser-form').show();
+        $('#add-account-form').hide();
+      } else {
+        $('#account-chooser-form').hide();
+        $('#add-account-form').show();
+      }
+      $('#okta-account-chooser').show();
+
     }
 
     function receiveMessage(event) {
+      var accounts, el;
       console.log('received message from iframe:', event);
       if (event.origin === iframeOrigin && event.data && event.data.messageType) {
         switch (event.data.messageType) {
+          case 'iframe_loaded':
+            console.log('loaded account chooser iframe');
+            sendMessage('get_accounts');
+          break;
           case 'processed_get_accounts' :
             if (event.data.accounts && event.data.accounts.length) {
+              accounts = event.data.accounts;
               renderAccounts(event.data.accounts);
-            } else {
-              $('#add-account-form').show();
             }
+            displayChooser(accounts);
             break;
           case 'processed_remove_account' :
             console.log('successfully delete account %s', event.data.accountId);
             if (event.data.accountId) {
-              var el = $('#okta-account-chooser [data-id="' + event.data.accountId + '"]');
+              el = $('#okta-account-chooser [data-id="' + event.data.accountId + '"]');
               if (el) {
                 if ($('#okta-account-chooser div.account-container').length === 1) {
-                  $('#account-chooser-form').hide();
-                  $('#add-account-form').show();
+                  displayChooser();
                 } else {
                   el.remove();
                 }
