@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link href="css/okta-sign-in.css" type="text/css" rel="stylesheet" />
     <script src="js/jquery.slim.min.js"></script>
-    <script src="js/pako.js"></script>
+    <script src="js/pako_inflate.min.js"></script>
     <script src="js/underscore-min.js"></script>
 </head>
 <body class="auth">
@@ -133,15 +133,13 @@
     </div>
   </div>
 
-  <iframe id="account-chooser-iframe" src="discovery/iframe.html" style="display:none;"></iframe>
-
   <script>
     var iframeOrigin = 'https://login.okta.io:8080';
     window.addEventListener('message', receiveMessage, false);
 
     $(document).ready(function() {
 
-      var initialized = false;
+      $('body').append('<iframe id="account-chooser-iframe" src="discovery/iframe.html" style="display:none;"></iframe>');
 
       $('#btn-account-sign-in').click(function(e) {
         e.preventDefault();
@@ -174,12 +172,6 @@
         window.sendMessage('remove_account', {
           accountId: $(this).parents('.account-container').data('id')
         });
-      });
-
-      $('#account-chooser-iframe').on('load', function () {
-          setTimeout(function () {
-
-          }, 500);
       });
     });
 
@@ -303,11 +295,9 @@
 
     function receiveMessage(event) {
       var accounts, el;
-      console.log('received message from iframe:', event);
       if (event.origin === iframeOrigin && event.data && event.data.messageType) {
         switch (event.data.messageType) {
           case 'iframe_loaded':
-            console.log('loaded account chooser iframe');
             sendMessage('get_accounts');
           break;
           case 'processed_get_accounts' :
@@ -318,7 +308,6 @@
             displayChooser(accounts);
             break;
           case 'processed_remove_account' :
-            console.log('successfully delete account %s', event.data.accountId);
             if (event.data.accountId) {
               el = $('#okta-account-chooser [data-id="' + event.data.accountId + '"]');
               if (el) {

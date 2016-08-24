@@ -1,18 +1,15 @@
 # Overview
 
-A technology sample that leverages [Web Messaging](https://html.spec.whatwg.org/multipage/comms.html#web-messaging) with hidden iframe to provide an account chooser across domains
+Okta Account Chooser that leverages [Web Messaging](https://html.spec.whatwg.org/multipage/comms.html#web-messaging) with hidden iframe to provide an account chooser across Okta organizations
 
 # Setup
 
-Install packages
+Install package dependencies
 
 `npm install`
 
-This demo is currently coded to only allow requests from `*.okta.io:8080` origins.
-
-1. Add 2 DNS entries to your `/etc/hosts` file
+1. Add a DNS entry to your `/etc/hosts` file
 - `127.0.0.1 login.okta.io`
-- `127.0.0.1 example.okta.io`
 
 ## Trusted Origin Whitelist
 
@@ -32,13 +29,15 @@ discovery/iframe.html
 var trustedRootDomains = ['okta.io:8080'];
 ```
 
-# Demo
+# Development
 
-1. Run `npm start` to launch web server
+1. Run `npm start` to launch web server on https
 1. Launch `https://login.okta.io:8080/test.html` and add an account
 2. Launch `https://login.okta.io:8080` and select account
 
-## Development
+> You may get a certificate warning as the site uses non-trusted certificate authority for HTTPS
+
+## Test
 
 To run lint and unit tests:
 
@@ -51,4 +50,4 @@ To run lint and unit tests:
 1. Run `npm install`
 2. Run 'npm run build'
 
-The build would output everything to the `./dist` folder
+The build will output to the `./dist` folder.  Use this folder to publish.
