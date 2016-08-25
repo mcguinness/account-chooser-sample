@@ -20,9 +20,11 @@
                 </div>
               </td>
               <td>
-                <div class="account-logo">
-                  <img src="<%- orgUrl %>/.well-known/logo" />
-                </div>
+                <a href="<%- acsUrl %>">
+                  <div class="account-logo">
+                    <img src="<%- orgUrl %>/.well-known/logo" />
+                  </div>
+                </a>
               </td>
               <td>
                 <a href="<%- acsUrl %>">
@@ -76,9 +78,6 @@
                         </option>
                         <option>
                           okta-emea.com
-                        </option>
-                        <option>
-                          oktapreview.com
                         </option>
                       </select>
                     </div>
@@ -225,7 +224,7 @@
         var parser = new DOMParser();
         try {
           var xmlDoc = parser.parseFromString(req, 'application/xml');
-          var node = xmlDoc.evaluate("//*[local-name(.)='Issuer']/text()", xmlDoc.documentElement, null, XPathResult.FIRST_ORDERED_NODE_TYPE).singleNodeValue;
+          var node = xmlDoc.evaluate("//*[local-name(.)='Issuer']/text()", xmlDoc.documentElement, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
           if (node && node.nodeType === 3) {
             return node.textContent;
           }
