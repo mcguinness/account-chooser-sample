@@ -426,10 +426,6 @@ h3 {
   display: block;
 }
 
-#okta-account-chooser .accounts-content {
-  margin-top: 28px;
-}
-
 #okta-account-chooser .account-container {
   float: left;
   border-top: 1px #ddd solid;
@@ -448,16 +444,16 @@ h3 {
   display: none;
   position: absolute;
   padding: 30px;
-  margin-left: -60px;
   margin-top: -5px;
+  margin-left: -55px;
   content: url(data:image/svg+xml;utf8;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pgo8IS0tIEdlbmVyYXRvcjogQWRvYmUgSWxsdXN0cmF0b3IgMTYuMC4wLCBTVkcgRXhwb3J0IFBsdWctSW4gLiBTVkcgVmVyc2lvbjogNi4wMCBCdWlsZCAwKSAgLS0+CjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiBpZD0iQ2FwYV8xIiB4PSIwcHgiIHk9IjBweCIgd2lkdGg9IjE2cHgiIGhlaWdodD0iMTZweCIgdmlld0JveD0iMCAwIDUzMy4zMzMgNTMzLjMzMyIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgNTMzLjMzMyA1MzMuMzMzOyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+CjxnPgoJPHBhdGggZD0iTTI2Ni42NjcsMEMxMTkuMzkxLDAsMCwxMTkuMzkxLDAsMjY2LjY2N2MwLDE0Ny4yNzUsMTE5LjM5MSwyNjYuNjY2LDI2Ni42NjcsMjY2LjY2NiAgIGMxNDcuMjc1LDAsMjY2LjY2Ny0xMTkuMzkxLDI2Ni42NjctMjY2LjY2NkM1MzMuMzMzLDExOS4zOTEsNDEzLjk0MiwwLDI2Ni42NjcsMHogTTQwMCwxODAuNDc0bC04Ni4xOTEsODYuMTkzTDQwMCwzNTIuODU4VjQwMCAgIGgtNDcuMTQybC04Ni4xOTEtODYuMTkxTDE4MC40NzQsNDAwaC00Ny4xNDF2LTQ3LjE0Mmw4Ni4xOTMtODYuMTkxbC04Ni4xOTMtODYuMTkzdi00Ny4xNGg0Ny4xNDFsODYuMTkzLDg2LjE5M2w4Ni4xOTEtODYuMTkzSDQwMCAgIFYxODAuNDc0eiIgZmlsbD0iI2NjY2NjYyIvPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+Cjwvc3ZnPgo=);
 }
 
 #okta-account-chooser .account-container .account-arrow {
-  margin-top: 28px;
   width: 16px;
   height: 16px;
   display: block;
+  margin: 28px 0 0 16px;
   background-image: url(data:image/svg+xml;utf8;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pgo8IS0tIEdlbmVyYXRvcjogQWRvYmUgSWxsdXN0cmF0b3IgMTYuMC4wLCBTVkcgRXhwb3J0IFBsdWctSW4gLiBTVkcgVmVyc2lvbjogNi4wMCBCdWlsZCAwKSAgLS0+CjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiBpZD0iQ2FwYV8xIiB4PSIwcHgiIHk9IjBweCIgd2lkdGg9IjE2cHgiIGhlaWdodD0iMTZweCIgdmlld0JveD0iMCAwIDQ1MS44NDYgNDUxLjg0NyIgc3R5bGU9ImVuYWJsZS1iYWNrZ3JvdW5kOm5ldyAwIDAgNDUxLjg0NiA0NTEuODQ3OyIgeG1sOnNwYWNlPSJwcmVzZXJ2ZSI+CjxnPgoJPHBhdGggZD0iTTM0NS40NDEsMjQ4LjI5MkwxNTEuMTU0LDQ0Mi41NzNjLTEyLjM1OSwxMi4zNjUtMzIuMzk3LDEyLjM2NS00NC43NSwwYy0xMi4zNTQtMTIuMzU0LTEyLjM1NC0zMi4zOTEsMC00NC43NDQgICBMMjc4LjMxOCwyMjUuOTJMMTA2LjQwOSw1NC4wMTdjLTEyLjM1NC0xMi4zNTktMTIuMzU0LTMyLjM5NCwwLTQ0Ljc0OGMxMi4zNTQtMTIuMzU5LDMyLjM5MS0xMi4zNTksNDQuNzUsMGwxOTQuMjg3LDE5NC4yODQgICBjNi4xNzcsNi4xOCw5LjI2MiwxNC4yNzEsOS4yNjIsMjIuMzY2QzM1NC43MDgsMjM0LjAxOCwzNTEuNjE3LDI0Mi4xMTUsMzQ1LjQ0MSwyNDguMjkyeiIgZmlsbD0iI2NjY2NjYyIvPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+CjxnPgo8L2c+Cjwvc3ZnPgo=);
 }
 
@@ -468,17 +464,17 @@ h3 {
 #okta-account-chooser .account-container .account-logo {
   border: 1px #ddd solid;
   padding: 5px;
-  width: 75px;
-  height: 30px;
+  width: 65px;
+  height: 25px;
   text-align: center;
   border-radius: 3px;
-  margin: 15px 10px 0px 0px;
-  line-height: 30px;
+  margin: 17px 10px 0px 0px;
+  line-height: 25px;
 }
 
 #okta-account-chooser .account-container .account-logo img {
-  max-width: 65px;
-  max-height: 30px;
+  max-width: 45px;
+  max-height: 19px;
   vertical-align: middle;
 }
 
@@ -524,7 +520,7 @@ h3 {
   font-weight: bold;
   margin: 15px 0 0 0;
   color: #007dc1;
-  font-weight: 300;
+  font-weight: 400;
 }
 
 #okta-account-chooser .add-account-content .label:hover {
