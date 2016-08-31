@@ -378,6 +378,21 @@ h3 {
   text-align: center;
 }
 
+.okta-form-footer {
+  margin-bottom: 25px;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+#okta-account-chooser .okta-form-subtitle {
+  color: #777;
+  text-align: center;
+}
+
+#okta-account-chooser .okta-form-subtitle strong {
+  font-weight: 600;
+}
+
 #okta-account-chooser input[type="submit"], #okta-account-chooser input[type="button"] {
   font-family: "montserrat",Arial,Helvetica,sans-serif;
 }
